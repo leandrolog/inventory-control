@@ -2,7 +2,6 @@ package com.api.pa.controllers;
 
 
 import com.api.pa.dtos.RequestDto;
-import com.api.pa.models.ProductModel;
 import com.api.pa.models.RequestModel;
 import com.api.pa.services.RequestService;
 import jakarta.validation.Valid;
@@ -20,7 +19,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
-import static sun.security.ssl.SSLLogger.info;
 
 @Controller
 public class RequestController {
@@ -52,6 +50,6 @@ public class RequestController {
         Optional<RequestModel> requestModelOptional = requestService.findById(requestId);
         requestService.delete(requestModelOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body("Request deletado");
-    }
+    }///
 
 }
