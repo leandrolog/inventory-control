@@ -1,6 +1,6 @@
 package com.api.pa.services;
 
-import com.api.pa.models.UserModel;
+import com.api.pa.models.User;
 import com.api.pa.repositories.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,21 +18,21 @@ public class UserService {
         this.userRepository = userRepository;
     }
     @Transactional
-    public UserModel save(UserModel userModel){
-        return userRepository.save(userModel);
+    public User save(User user){
+        return userRepository.save(user);
     }
 
 
-    public Page<UserModel> findAll(Pageable pageable) {
+    public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
-    public Optional<UserModel> findById(Integer userId) {
+    public Optional<User> findById(Integer userId) {
         return userRepository.findById(userId);
     }
 
     @Transactional
-    public void delete(UserModel userModel) {
-        userRepository.delete(userModel);
+    public void delete(User user) {
+        userRepository.delete(user);
     }
 }

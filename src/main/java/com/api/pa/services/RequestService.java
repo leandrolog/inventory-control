@@ -1,6 +1,6 @@
 package com.api.pa.services;
 
-import com.api.pa.models.RequestModel;
+import com.api.pa.models.Request;
 import com.api.pa.repositories.RequestRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,17 +17,17 @@ public class RequestService {
     public RequestService(RequestRepository requestRepository) {
         this.requestRepository = requestRepository;
     }
-    public RequestModel save(RequestModel requestModel) {
-        return requestRepository.save(requestModel);
+    public Request save(Request request) {
+        return requestRepository.save(request);
     }
-    public Page<RequestModel> findAll(Pageable pageable) {
+    public Page<Request> findAll(Pageable pageable) {
         return requestRepository.findAll(pageable);
     }
-    public Optional<RequestModel> findById(Integer requestId) {
+    public Optional<Request> findById(Integer requestId) {
         return requestRepository.findById(requestId);
     }
 
-    public void delete(RequestModel requestModel) {
-        requestRepository.delete(requestModel);
+    public void delete(Request request) {
+        requestRepository.delete(request);
     }
 }

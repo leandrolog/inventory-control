@@ -1,7 +1,7 @@
 package com.api.pa.controllers;
 
 import com.api.pa.dtos.UserDto;
-import com.api.pa.models.UserModel;
+import com.api.pa.models.User;
 import com.api.pa.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +28,7 @@ public class UserController {
 
     @PostMapping("new-user")
     public ResponseEntity<Object> saveUser(@RequestBody @Valid UserDto userDto) {
-        var userModel = new UserModel();
+        var userModel = new User();
         BeanUtils.copyProperties(userDto, userModel);
         return ResponseEntity.status(HttpStatus.OK).body(userService.save(userModel));
     }
@@ -40,21 +40,21 @@ public class UserController {
 
     @GetMapping("user/{userId}")
     public ResponseEntity<Object> getUser(@PathVariable("userId") Integer userId) {
-        Optional<UserModel> userModelOptional = userService.findById(userId);
+        Optional<User> userModelOptional = userService.findById(userId);
         return ResponseEntity.status(HttpStatus.OK).body(userModelOptional.get());
     }
 
     @DeleteMapping("user/{userId}")
     public ResponseEntity<Object> deleteUser(@PathVariable("userId") Integer userId) {
-        Optional<UserModel> userModelOptional = userService.findById(userId);
+        Optional<User> userModelOptional = userService.findById(userId);
         userService.delete(userModelOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado");
     }
 
     @PutMapping("user/{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable("userId") Integer userId, @RequestBody @Valid UserDto userDto) {
-        Optional<UserModel> userModelOptional = userService.findById(userId);
-        var userModel = new UserModel();
+        Optional<User> userModelOptional = userService.findById(userId);
+        var userModel = new User();
         BeanUtils.copyProperties(userDto, userModel);
         userModel.setUserId(userModelOptional.get().getUserId());
         return ResponseEntity.status(HttpStatus.OK).body(userService.save(userModel));

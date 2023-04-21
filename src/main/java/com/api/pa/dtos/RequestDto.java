@@ -10,10 +10,10 @@ import java.util.Date;
 @Setter
 public class RequestDto {
 
-    private ProductDto product;
     @NotBlank
     private String requester;
     private Date dateIn;
     private Date dateOut;
+    private Integer productId;
 
 }

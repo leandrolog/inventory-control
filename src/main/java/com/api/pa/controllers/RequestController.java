@@ -1,11 +1,14 @@
 package com.api.pa.controllers;
 
-
 import com.api.pa.dtos.RequestDto;
-import com.api.pa.models.RequestModel;
+import com.api.pa.models.Product;
+import com.api.pa.models.Request;
+import com.api.pa.repositories.ProductRepository;
+import com.api.pa.services.ProductService;
 import com.api.pa.services.RequestService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,11 +22,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
-
 @Controller
 public class RequestController {
 
+    @Autowired
 
+    private ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
     final RequestService requestService;
 
     public RequestController(RequestService requestService) {
@@ -32,8 +38,10 @@ public class RequestController {
 
     @PostMapping("new-request")
     public ResponseEntity<Object> saveRequest(@RequestBody @Valid RequestDto requestDto) {
-        var requestModel = new RequestModel();
+        var requestModel = new Request();
         BeanUtils.copyProperties(requestDto, requestModel);
+        Product product = productRepository.getReferenceById(requestDto.getProductId());
+        requestModel.setProduct(product);
         requestModel.setDateIn(LocalDateTime.now(ZoneId.of("UTC")));
         return ResponseEntity.status(HttpStatus.OK).body(requestService.save(requestModel));
     }
@@ -47,7 +55,7 @@ public class RequestController {
     }
     @DeleteMapping("request/{requestId}")
     public ResponseEntity<Object> deleteRequest (@PathVariable("requestId") Integer requestId){
-        Optional<RequestModel> requestModelOptional = requestService.findById(requestId);
+        Optional<Request> requestModelOptional = requestService.findById(requestId);
         requestService.delete(requestModelOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body("Request deletado");
     }///
