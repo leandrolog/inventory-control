@@ -28,6 +28,9 @@ public class ProductController {
 
     @PostMapping("/new-product")
     public ResponseEntity<Object> saveProduct(@RequestBody @Valid ProductDto productDto) {
+        if(productService.existsByProductName(productDto.getProductName())){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("A product with this name already exists.");
+        }
         var productModel = new Product();
         BeanUtils.copyProperties(productDto, productModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(productModel));
@@ -59,7 +62,7 @@ public class ProductController {
                                               @RequestBody @Valid ProductDto productDto){
         Optional<Product> productModelOptional = productService.findById(productId);
         if(!productModelOptional.isPresent()){
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado");
         }
         var productModel = new Product();
         BeanUtils.copyProperties(productDto, productModel);

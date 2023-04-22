@@ -12,7 +12,6 @@ public class UserDto {
     private String userName;
     @NotBlank
     private String role;
-    @NotBlank
     private String requests;
 
 }

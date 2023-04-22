@@ -31,4 +31,8 @@ public class ProductService {
     public void delete(Product product) {
         productRepository.delete(product);
     }
+
+    public boolean existsByProductName(String productName) {
+        return productRepository.existsByProductName(productName);
+    }
 }

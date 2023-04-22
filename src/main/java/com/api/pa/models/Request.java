@@ -18,8 +18,9 @@ public class Request {
     @JoinColumn(name = "product_id")
     @JsonIgnore
     private Product product;
-    @Column(nullable = false)
-    private String requester;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     @Column(nullable = false)
     private LocalDateTime dateIn;
     @Column

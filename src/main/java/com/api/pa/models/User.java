@@ -3,6 +3,8 @@ package com.api.pa.models;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "users")
@@ -15,7 +17,7 @@ public class User {
     private String userName;
     @Column(nullable = false)
     private String role;
-    @Column(nullable = false)
-    private String requests; // relacionar com requests
+    @OneToMany(mappedBy = "user")
+    private List<Request> request;
 
 }
