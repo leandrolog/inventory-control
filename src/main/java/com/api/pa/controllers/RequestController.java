@@ -7,6 +7,7 @@ import com.api.pa.models.User;
 import com.api.pa.repositories.ProductRepository;
 import com.api.pa.repositories.UserRepository;
 import com.api.pa.services.RequestService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,7 @@ public class RequestController {
     }
 
     @DeleteMapping("request/{requestId}")
+    @RolesAllowed("SUPER")
     public ResponseEntity<Object> deleteRequest(@PathVariable("requestId") Integer requestId) {
         Optional<Request> requestModelOptional = requestService.findById(requestId);
         if(!requestModelOptional.isPresent()){

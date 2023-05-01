@@ -4,6 +4,7 @@ package com.api.pa.controllers;
 import com.api.pa.dtos.ProductDto;
 import com.api.pa.models.Product;
 import com.api.pa.services.ProductService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +28,9 @@ public class ProductController {
     }
 
     @PostMapping("/new-product")
+    @RolesAllowed("ADMIN")
     public ResponseEntity<Object> saveProduct(@RequestBody @Valid ProductDto productDto) {
-        if(productService.existsByProductName(productDto.getProductName())){
+        if (productService.existsByProductName(productDto.getProductName())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("A product with this name already exists.");
         }
         var productModel = new Product();
@@ -37,31 +39,36 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<Object> getAllProducts(@PageableDefault(page = 0, size = 10, sort = "productId", direction = Sort.Direction.ASC)Pageable pageable){
+    public ResponseEntity<Object> getAllProducts(@PageableDefault(page = 0, size = 10, sort = "productId", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(pageable));
     }
+
     @GetMapping("/product/{productId}")
-    public ResponseEntity<Object> getProduct(@PathVariable(value = "productId") Integer productId){
+    public ResponseEntity<Object> getProduct(@PathVariable(value = "productId") Integer productId) {
         Optional<Product> productModelOptional = productService.findById(productId);
-        if(!productModelOptional.isPresent()){
+        if (!productModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado!");
         }
         return ResponseEntity.status(HttpStatus.OK).body(productModelOptional.get());
     }
+
     @DeleteMapping("/product/{productId}")
-    public ResponseEntity<Object> deleteProduct(@PathVariable(value = "productId") Integer productId){
+    @RolesAllowed("ADMIN, SUPER")
+    public ResponseEntity<Object> deleteProduct(@PathVariable(value = "productId") Integer productId) {
         Optional<Product> productModelOptional = productService.findById(productId);
-        if(!productModelOptional.isPresent()){
+        if (!productModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado");
         }
         productService.delete(productModelOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body("Produto deletado com sucesso");
     }
+
     @PutMapping("/product/{productId}")
+    @RolesAllowed("ADMIN, SUPER")
     public ResponseEntity<Object> updateProduct(@PathVariable(value = "productId") Integer productId,
-                                              @RequestBody @Valid ProductDto productDto){
+                                                @RequestBody @Valid ProductDto productDto) {
         Optional<Product> productModelOptional = productService.findById(productId);
-        if(!productModelOptional.isPresent()){
+        if (!productModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado");
         }
         var productModel = new Product();
