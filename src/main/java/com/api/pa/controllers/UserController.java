@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("new-user")
-    @RolesAllowed("SUPER")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> saveUser(@RequestBody @Valid UserDto userDto) {
         var userModel = new User();
         userDto.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
@@ -42,20 +42,20 @@ public class UserController {
     }
 
     @GetMapping("users")
-    @RolesAllowed("ADMIN ,SUPER")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Page> getAllUsers(@PageableDefault(page = 0, size = 10, sort = "userId", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findAll(pageable));
     }
 
     @GetMapping("user/{userId}")
-    @RolesAllowed("ADMIN ,SUPER")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> getUser(@PathVariable("userId") Integer userId) {
         Optional<User> userModelOptional = userService.findById(userId);
         return ResponseEntity.status(HttpStatus.OK).body(userModelOptional.get());
     }
 
     @DeleteMapping("user/{userId}")
-    @RolesAllowed("SUPER")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> deleteUser(@PathVariable("userId") Integer userId) {
         Optional<User> userModelOptional = userService.findById(userId);
         userService.delete(userModelOptional.get());
@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @PutMapping("user/{userId}")
-    @RolesAllowed("SUPER")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> updateUser(@PathVariable("userId") Integer userId, @RequestBody @Valid UserDto userDto) {
         Optional<User> userModelOptional = userService.findById(userId);
         var userModel = new User();

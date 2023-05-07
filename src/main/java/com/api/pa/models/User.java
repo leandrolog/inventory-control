@@ -17,8 +17,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     private Integer userId;
-    @Column(nullable = false)
-    private String ROLE_USER;
+    private String role;
     @Column(nullable = false)
     private String name;
     @OneToMany(mappedBy = "user")
@@ -31,7 +30,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(ROLE_USER));
+        return List.of(new SimpleGrantedAuthority(role));
     }
 
     @Override

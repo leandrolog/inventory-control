@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,7 @@ public class RequestController {
     }
 
     @PostMapping("new-request")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<Object> saveRequest(@RequestBody @Valid RequestDto requestDto) {
         var requestModel = new Request();
         BeanUtils.copyProperties(requestDto, requestModel);
@@ -50,11 +52,13 @@ public class RequestController {
     }
 
     @GetMapping("requests")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Page> getAllRequests(@PageableDefault(page = 0, size = 10, sort = "requestId", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(requestService.findAll(pageable));
     }
 
     @GetMapping("request/{requestId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> getRequest(@PathVariable("requestId") Integer requestId) {
         Optional<Request> requestOptional = requestService.findById(requestId);
         if (!requestOptional.isPresent()) {
@@ -64,7 +68,7 @@ public class RequestController {
     }
 
     @DeleteMapping("request/{requestId}")
-    @RolesAllowed("SUPER")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> deleteRequest(@PathVariable("requestId") Integer requestId) {
         Optional<Request> requestModelOptional = requestService.findById(requestId);
         if(!requestModelOptional.isPresent()){

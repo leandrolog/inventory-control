@@ -4,7 +4,6 @@ package com.api.pa.controllers;
 import com.api.pa.dtos.ProductDto;
 import com.api.pa.models.Product;
 import com.api.pa.services.ProductService;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -28,7 +28,7 @@ public class ProductController {
     }
 
     @PostMapping("/new-product")
-    @RolesAllowed("ADMIN")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> saveProduct(@RequestBody @Valid ProductDto productDto) {
         if (productService.existsByProductName(productDto.getProductName())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("A product with this name already exists.");
@@ -39,11 +39,13 @@ public class ProductController {
     }
 
     @GetMapping("/products")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<Object> getAllProducts(@PageableDefault(page = 0, size = 10, sort = "productId", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(pageable));
     }
 
     @GetMapping("/product/{productId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> getProduct(@PathVariable(value = "productId") Integer productId) {
         Optional<Product> productModelOptional = productService.findById(productId);
         if (!productModelOptional.isPresent()) {
@@ -53,7 +55,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/product/{productId}")
-    @RolesAllowed("ADMIN, SUPER")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> deleteProduct(@PathVariable(value = "productId") Integer productId) {
         Optional<Product> productModelOptional = productService.findById(productId);
         if (!productModelOptional.isPresent()) {
@@ -64,7 +66,7 @@ public class ProductController {
     }
 
     @PutMapping("/product/{productId}")
-    @RolesAllowed("ADMIN, SUPER")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> updateProduct(@PathVariable(value = "productId") Integer productId,
                                                 @RequestBody @Valid ProductDto productDto) {
         Optional<Product> productModelOptional = productService.findById(productId);
