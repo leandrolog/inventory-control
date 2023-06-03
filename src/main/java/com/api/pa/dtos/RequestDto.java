@@ -15,5 +15,6 @@ public class RequestDto {
     private Date dateIn;
     private Date dateOut;
     private Integer productId;
+    private Integer quantity;
 
 }

@@ -1,28 +1,40 @@
 package com.api.pa.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "requests")
 public class Request {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+            name = "user_sequence",
+            sequenceName = "user_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "user_sequence"
+    )
     @Id
-    private Integer requestId;
-    @OneToOne
+    private Integer request_id;
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "product_id")
-    @JsonIgnore
     private Product product;
-    @ManyToOne
+    private Integer quantity;
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User user;
     @Column(nullable = false)
     private LocalDateTime dateIn;
     @Column
     private LocalDateTime dateOut;
+    @Column(columnDefinition = "varchar")
+    @Enumerated(EnumType.STRING)
+    private RequestStatus status;
 }

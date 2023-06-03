@@ -39,13 +39,13 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<Object> getAllProducts(@PageableDefault(page = 0, size = 10, sort = "productId", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(pageable));
     }
 
     @GetMapping("/product/{productId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<Object> getProduct(@PathVariable(value = "productId") Integer productId) {
         Optional<Product> productModelOptional = productService.findById(productId);
         if (!productModelOptional.isPresent()) {

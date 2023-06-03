@@ -3,7 +3,6 @@ package com.api.pa.controllers;
 import com.api.pa.dtos.UserDto;
 import com.api.pa.models.User;
 import com.api.pa.services.UserService;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -15,12 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@Controller
+@RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
 
     final UserService userService;
@@ -32,8 +31,8 @@ public class UserController {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @PostMapping("new-user")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("new-user")
     public ResponseEntity<Object> saveUser(@RequestBody @Valid UserDto userDto) {
         var userModel = new User();
         userDto.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));

@@ -5,6 +5,7 @@ import com.api.pa.repositories.RequestRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ public class RequestService {
     public RequestService(RequestRepository requestRepository) {
         this.requestRepository = requestRepository;
     }
+    @Transactional
     public Request save(Request request) {
         return requestRepository.save(request);
     }
@@ -26,7 +28,7 @@ public class RequestService {
     public Optional<Request> findById(Integer requestId) {
         return requestRepository.findById(requestId);
     }
-
+    @Transactional
     public void delete(Request request) {
         requestRepository.delete(request);
     }

@@ -16,9 +16,7 @@ public class ProductDto {
     private LocalDateTime expirationDate;
     @NotNull
     private Integer quantity;
-    @NotNull
     private Double unitPrice;
-    @NotBlank
     private String supplier;
 
 }
