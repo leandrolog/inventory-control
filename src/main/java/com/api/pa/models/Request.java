@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 public class Request {
 
     @SequenceGenerator(
-            name = "user_sequence",
-            sequenceName = "user_sequence",
+            name = "request_sequence",
+            sequenceName = "request_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "user_sequence"
+            generator = "request_sequence"
     )
     @Id
     private Integer request_id;
@@ -30,10 +30,14 @@ public class Request {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User user;
-    @Column(nullable = false)
-    private LocalDateTime dateIn;
     @Column
-    private LocalDateTime dateOut;
+    private LocalDateTime createdAt;
+    @Column
+    private LocalDateTime acceptedAt;
+    @Column
+    private LocalDateTime returnedAt;
+    @Column
+    private LocalDateTime canceledAt;
     @Column(columnDefinition = "varchar")
     @Enumerated(EnumType.STRING)
     private RequestStatus status;

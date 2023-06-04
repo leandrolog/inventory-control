@@ -17,7 +17,15 @@ import java.util.List;
 @Table(name = "users")
 public class User implements UserDetails {
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(
+            name = "user_sequence",
+            sequenceName = "user_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "user_sequence"
+    )
     @Id
     private Integer userId;
     private String role;
