@@ -31,6 +31,8 @@ public class User implements UserDetails {
     private String role;
     @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
+    private String department;
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Request> request;

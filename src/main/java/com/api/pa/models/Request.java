@@ -33,6 +33,8 @@ public class Request {
     @Column
     private LocalDateTime createdAt;
     @Column
+    private String reason;
+    @Column
     private LocalDateTime acceptedAt;
     @Column
     private LocalDateTime returnedAt;

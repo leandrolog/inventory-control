@@ -67,40 +67,40 @@ public class RequestController {
         RequestStatus newStatus = viewRequestDto.getStatus();
         Request request = requestOptional.get();
 
-        if (newStatus.equals(RequestStatus.ACCEPTED)) {
-
-            Product product = request.getProduct();
-            int newQuantity = product.getQuantity() - request.getQuantity();
-            if(newQuantity < 0){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Quantidade solicitada não disponivel!!!");
+        switch (newStatus) {
+            case ACCEPTED -> {
+                Product product = request.getProduct();
+                int newQuantity = product.getQuantity() - request.getQuantity();
+                if (newQuantity < 0) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Quantidade solicitada não disponivel!!!");
+                }
+                request.setStatus(newStatus);
+                request.setAcceptedAt(LocalDateTime.now());
+                product.setQuantity(newQuantity);
+                productRepository.save(product);
+                return ResponseEntity.status(HttpStatus.OK).body("Solicitação aceita!");
             }
-            request.setStatus(newStatus);
-            request.setAcceptedAt(LocalDateTime.now());
-            product.setQuantity(newQuantity);
-            productRepository.save(product);
-            return ResponseEntity.status(HttpStatus.OK).body("Solicitação aceita!");
-        }
-        if (newStatus.equals(RequestStatus.RETURNED)) {
-            request.setStatus(newStatus);
-            request.setReturnedAt(LocalDateTime.now());
-            Product product = request.getProduct();
-            int originalQuantity = product.getQuantity() + request.getQuantity();
-            product.setQuantity(originalQuantity);
-            productRepository.save(product);
-            return ResponseEntity.status(HttpStatus.OK).body("Devolução feita!");
-        }
-        if (newStatus.equals(RequestStatus.CANCELED)) {
-            request.setStatus(newStatus);
-            request.setCanceledAt(LocalDateTime.now());
-            return ResponseEntity.status(HttpStatus.OK).body("Solicitação cancelada!");
+            case RETURNED -> {
+                request.setStatus(newStatus);
+                request.setReturnedAt(LocalDateTime.now());
+                Product product = request.getProduct();
+                int originalQuantity = product.getQuantity() + request.getQuantity();
+                product.setQuantity(originalQuantity);
+                productRepository.save(product);
+                return ResponseEntity.status(HttpStatus.OK).body("Devolução feita!");
+            }
+            case CANCELED -> {
+                request.setStatus(newStatus);
+                request.setCanceledAt(LocalDateTime.now());
+                requestRepository.save(request);
+                return ResponseEntity.status(HttpStatus.OK).body("Solicitação cancelada!");
+            }
         }
         return ResponseEntity.status(HttpStatus.OK).body(requestRepository.save(request));
     }
-
-
     @GetMapping("/requests")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    public ResponseEntity<Page> getAllRequests(@PageableDefault(page = 0, size = 10, sort = "request_id", direction = Sort.Direction.ASC) Pageable pageable) {
+    public ResponseEntity<Page> getAllRequests(@PageableDefault(page = 0, size = 10, sort = "status", direction = Sort.Direction.DESC) Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Integer id = user.getUserId();
 

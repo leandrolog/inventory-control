@@ -10,6 +10,7 @@ public class UserDto {
 
     @NotBlank
     private String role;
+    private String department;
     private String requests;
     private String email;
     private String name;
