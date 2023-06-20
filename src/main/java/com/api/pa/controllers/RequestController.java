@@ -100,7 +100,7 @@ public class RequestController {
     }
     @GetMapping("/requests")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    public ResponseEntity<Page> getAllRequests(@PageableDefault(page = 0, size = 10, sort = "status", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<Page> getAllRequests(@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Integer id = user.getUserId();
 
