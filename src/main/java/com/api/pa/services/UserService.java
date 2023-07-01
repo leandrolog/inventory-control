@@ -2,11 +2,11 @@ package com.api.pa.services;
 
 import com.api.pa.models.User;
 import com.api.pa.repositories.UserRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,8 +23,8 @@ public class UserService {
     }
 
 
-    public Page<User> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public List<User> findAll(Sort sort) {
+        return userRepository.findAll(sort);
     }
 
     public Optional<User> findById(Integer userId) {

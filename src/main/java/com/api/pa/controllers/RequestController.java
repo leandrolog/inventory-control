@@ -12,10 +12,8 @@ import com.api.pa.services.RequestService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -75,14 +74,14 @@ public class RequestController {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Quantidade solicitada não disponivel!!!");
                 }
                 request.setStatus(newStatus);
-                request.setAcceptedAt(LocalDateTime.now());
+                request.setAcceptedAt(LocalDateTime.now(ZoneId.of("UTC")));
                 product.setQuantity(newQuantity);
                 productRepository.save(product);
                 return ResponseEntity.status(HttpStatus.OK).body("Solicitação aceita!");
             }
             case RETURNED -> {
                 request.setStatus(newStatus);
-                request.setReturnedAt(LocalDateTime.now());
+                request.setReturnedAt(LocalDateTime.now(ZoneId.of("UTC")));
                 Product product = request.getProduct();
                 int originalQuantity = product.getQuantity() + request.getQuantity();
                 product.setQuantity(originalQuantity);
@@ -91,7 +90,7 @@ public class RequestController {
             }
             case CANCELED -> {
                 request.setStatus(newStatus);
-                request.setCanceledAt(LocalDateTime.now());
+                request.setCanceledAt(LocalDateTime.now(ZoneId.of("UTC")));
                 requestRepository.save(request);
                 return ResponseEntity.status(HttpStatus.OK).body("Solicitação cancelada!");
             }
@@ -100,15 +99,15 @@ public class RequestController {
     }
     @GetMapping("/requests")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    public ResponseEntity<Page> getAllRequests(@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<List> getAllRequests(@SortDefault(sort = "createdAt", direction = Sort.Direction.DESC) Sort sort) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Integer id = user.getUserId();
 
         var role = user.getAuthorities().stream().toList().get(0).getAuthority();
         if ("ROLE_ADMIN".equals(role)) {
-            return ResponseEntity.status(HttpStatus.OK).body(requestRepository.findAllRequests(pageable));
+            return ResponseEntity.status(HttpStatus.OK).body(requestRepository.findAllRequests(sort));
         }
-        var findUserRequest = requestRepository.findByUserUserId(id, pageable);
+        var findUserRequest = requestRepository.findByUserUserId(id, sort);
         return ResponseEntity.status(HttpStatus.OK).body(findUserRequest);
     }
 

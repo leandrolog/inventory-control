@@ -6,9 +6,8 @@ import com.api.pa.models.Product;
 import com.api.pa.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,8 +39,8 @@ public class ProductController {
 
     @GetMapping("/products")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    public ResponseEntity<Object> getAllProducts(@PageableDefault(page = 0, size = 10, sort = "productId", direction = Sort.Direction.ASC) Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(pageable));
+    public ResponseEntity<Object> getAllProducts(@SortDefault(sort = "productId", direction = Sort.Direction.ASC) Sort sort) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(sort));
     }
 
     @GetMapping("/product/{productId}")
