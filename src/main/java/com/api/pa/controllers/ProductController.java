@@ -6,7 +6,9 @@ import com.api.pa.models.Product;
 import com.api.pa.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +39,10 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(productModel));
     }
 
+    //ajustar no front ao logar a pagina de products nao esta conseugindo ver que o usuario logado
+    // ka tem uma role definida e nao permite a chamada para products
     @GetMapping("/products")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+   // @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<Object> getAllProducts(@SortDefault(sort = "productId", direction = Sort.Direction.ASC) Sort sort) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findAll(sort));
     }

@@ -36,6 +36,8 @@ public class JwtConfiguration {
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, "/home")
                 .permitAll()
+                .requestMatchers(HttpMethod.GET, "/products")
+                .permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .build();
